@@ -1,8 +1,7 @@
 package com.todoist.pojo;
 
 public class Project extends TodoistObject {
-    public static final int MIN_INDENT = 1;
-    public static final int MAX_INDENT = 4;
+    public static final int MAX_DEPTH = 3;
 
     public static final int[] COLORS_PREMIUM = {
             Colors.LIME,
@@ -44,7 +43,7 @@ public class Project extends TodoistObject {
     private String name;
     private int color;
     private int itemOrder;
-    private int indent;
+    private Long parentId;
     private boolean collapsed;
     private boolean inbox;
     private boolean teamInbox;
@@ -52,13 +51,13 @@ public class Project extends TodoistObject {
     private boolean shared;
     private boolean archived;
 
-    public Project(long id, String name, int color, int itemOrder, int indent, boolean collapsed, boolean inbox,
+    public Project(long id, String name, int color, int itemOrder, Long parentId, boolean collapsed, boolean inbox,
                    boolean teamInbox, boolean hasMoreNotes, boolean shared, boolean archived, boolean deleted) {
         super(id, deleted);
         this.name = sanitizeName(name);
         this.color = color;
         this.itemOrder = itemOrder;
-        this.indent = indent;
+        this.parentId = parentId;
         this.collapsed = collapsed;
         this.inbox = inbox;
         this.teamInbox = teamInbox;
@@ -67,17 +66,17 @@ public class Project extends TodoistObject {
         this.archived = archived;
     }
 
-    public Project(long id, String name, int color, int itemOrder, int indent, boolean collapsed,
+    public Project(long id, String name, int color, int itemOrder, Long parentId, boolean collapsed,
                    boolean inbox, boolean teamInbox, boolean hasMoreNotes, boolean shared) {
-        this(id, name, color, itemOrder, indent, collapsed, inbox, teamInbox, hasMoreNotes, shared, false, false);
+        this(id, name, color, itemOrder, parentId, collapsed, inbox, teamInbox, hasMoreNotes, shared, false, false);
     }
 
-    public Project(long id, String name, int color, int itemOrder, int indent) {
-        this(id, name, color, itemOrder, indent, false, false, false, false, false, false, false);
+    public Project(long id, String name, int color, int itemOrder, Long parentId) {
+        this(id, name, color, itemOrder, parentId, false, false, false, false, false, false, false);
     }
 
     public Project(long id, String name, int itemOrder) {
-        this(id, name, DEFAULT_COLOR, itemOrder, MIN_INDENT, false, false, false, false, false, false, false);
+        this(id, name, DEFAULT_COLOR, itemOrder, null, false, false, false, false, false, false, false);
     }
 
     public String getName() {
@@ -127,15 +126,12 @@ public class Project extends TodoistObject {
         this.itemOrder = itemOrder;
     }
 
-    /**
-     * Returns the indent within the bounds defined by {@link #MIN_INDENT} and {@link #MAX_INDENT}.
-     */
-    public int getIndent() {
-        return Utils.clamp(indent, MIN_INDENT, MAX_INDENT);
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setIndent(int indent) {
-        this.indent = indent;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     public boolean isCollapsed() {
